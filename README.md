@@ -151,7 +151,7 @@ Or it might be a Tireless Security Analyst that watches application logs, discov
 
 You're not just building a tool; you're cultivating a collaborator. The foundation you've built is the key, and this roadmap shows how to connect it to reality.
 
-
+THERE IS AN UPDATED VERSION THAT USES SRI IN STAGE 9 BUT IVE NOT PUT IT UP YET
 What the app contains
 
 SYMBOLIC RESONANCE ARCHITECTURE (SRA)
