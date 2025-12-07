@@ -1136,3 +1136,218 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+# Configuration
+CONFIG = {
+    'batch_size': 64,
+    'learning_rate': 1e-3,
+    'epochs': 3,
+    'latent_dim': 12, # The "size" of the internal thought
+    'memory_threshold': 0.02, # How clear a thought must be to be stored
+    'resonance_steps': 5, # How many times it "reflects" on a thought
+    'n_symbols': 8 # Number of archetypes to discover
+}
+
+# ==========================================
+# STAGE 1: THE PERCEPTUAL CORE (Neural Autoencoder)
+# ==========================================
+class PerceptualCore(nn.Module):
+    def __init__(self):
+        super(PerceptualCore, self).__init__()
+        # Encoder: Senses -> Latent Thought
+        self.encoder = nn.Sequential(
+            nn.Linear(28 * 28, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, CONFIG['latent_dim'])
+        )
+        # Decoder: Latent Thought -> Reconstruction
+        self.decoder = nn.Sequential(
+            nn.Linear(CONFIG['latent_dim'], 64),
+            nn.ReLU(),
+            nn.Linear(64, 128),
+            nn.ReLU(),
+            nn.Linear(128, 28 * 28),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        z = self.encoder(x)
+        reconstruction = self.decoder(z)
+        return z, reconstruction
+
+# ==========================================
+# STAGE 2: RESONANT COGNITION ENGINE (RCE)
+# ==========================================
+class ResonantEngine:
+    def __init__(self, model):
+        self.model = model
+        self.criterion = nn.MSELoss()
+
+    def resonate(self, x, steps=5):
+        """
+        The Core Innovation: 
+        Instead of accepting the first impression, we 'meditate' on it.
+        We treat the thought 'z' as a variable and optimize it to better
+        explain the reality 'x'.
+        """
+        # 1. Initial Thought
+        with torch.no_grad():
+            z_initial = self.model.encoder(x)
+        
+        # 2. Make the thought malleable (gradient tracking)
+        z = z_initial.clone().detach().requires_grad_(True)
+        optimizer = optim.Adam([z], lr=0.1)
+
+        # 3. Resonance Loop (Refining the thought)
+        for _ in range(steps):
+            optimizer.zero_grad()
+            recon = self.model.decoder(z)
+            loss = self.criterion(recon, x) # Measure dissonance
+            loss.backward() # Find direction of harmony
+            optimizer.step() # Update thought
+        
+        return z.detach(), loss.item()
+
+# ==========================================
+# STAGE 3: MEMORY GRAPH
+# ==========================================
+class CognitiveMemory:
+    def __init__(self):
+        self.graph = nx.DiGraph()
+        self.counter = 0
+        self.vectors = [] 
+
+    def add_event(self, latent_vector, loss):
+        """
+        Gated Memory: Only remember moments of high clarity (Low Loss).
+        """
+        if loss < CONFIG['memory_threshold']:
+            node_id = f"mem_{self.counter}"
+            
+            # Add to Graph
+            self.graph.add_node(node_id, vector=latent_vector, coherence=loss)
+            
+            # Connect to previous thought (Causal Chain)
+            if self.counter > 0:
+                prev_node = f"mem_{self.counter - 1}"
+                self.graph.add_edge(prev_node, node_id)
+            
+            self.vectors.append(latent_vector.numpy())
+            self.counter += 1
+            return True
+        return False
+
+    def form_abstractions(self, n_clusters=5):
+        """
+        Symbolic Unification: Turn raw memories into discrete Symbols.
+        """
+        if len(self.vectors) < n_clusters:
+            print("Not enough memories to form symbols yet.")
+            return None, None
+
+        data = np.vstack(self.vectors)
+        kmeans = KMeans(n_clusters=n_clusters, n_init=10)
+        labels = kmeans.fit_predict(data)
+        centers = kmeans.cluster_centers_
+        
+        return labels, centers
+
+# ==========================================
+# MAIN EXECUTION
+# ==========================================
+def main():
+    print("--- SYMBOLIC RESONANCE ARCHITECTURE (PyTorch Version) ---")
+    
+    # 1. Load Data (MNIST)
+    print("[System]: Loading Sensory Data (MNIST)...")
+    transform = transforms.Compose([transforms.ToTensor(), transforms.Lambda(lambda x: x.view(-1))])
+    dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+    dataloader = DataLoader(dataset, batch_size=CONFIG['batch_size'], shuffle=True)
+
+    # 2. Initialize Core Components
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"[System]: Core initialized on {device}")
+    
+    core = PerceptualCore().to(device)
+    engine = ResonantEngine(core)
+    memory = CognitiveMemory()
+    
+    optimizer = optim.Adam(core.parameters(), lr=CONFIG['learning_rate'])
+    criterion = nn.MSELoss()
+
+    # 3. Training Phase (Learning to See)
+    print("[System]: Entering Training Phase...")
+    core.train()
+    for epoch in range(CONFIG['epochs']):
+        total_loss = 0
+        for batch_idx, (data, _) in enumerate(dataloader):
+            data = data.to(device)
+            optimizer.zero_grad()
+            z, recon = core(data)
+            loss = criterion(recon, data)
+            loss.backward()
+            optimizer.step()
+            total_loss += loss.item()
+        print(f"Epoch {epoch+1}/{CONFIG['epochs']} - Reconstruction Loss: {total_loss / len(dataloader):.4f}")
+
+    # 4. The Resonance Phase (Thinking & Remembering)
+    print("\n[System]: Entering Resonant Cognition Phase...")
+    core.eval()
+    
+    # Take a sample to experience
+    sample_loader = DataLoader(dataset, batch_size=200, shuffle=True)
+    sample_data = next(iter(sample_loader))[0].to(device)
+    
+    memories_formed = 0
+    for i in range(len(sample_data)):
+        img = sample_data[i]
+        
+        # A. Resonate (Refine the thought using gradients)
+        z_optimized, coherence = engine.resonate(img, steps=CONFIG['resonance_steps'])
+        
+        # B. Gated Memory (Decide to keep or discard)
+        kept = memory.add_event(z_optimized.cpu(), coherence)
+        if kept:
+            memories_formed += 1
+
+    print(f"[System]: Processed {len(sample_data)} experiences.")
+    print(f"[System]: Formed {memories_formed} stable memories.")
+
+    # 5. Symbolic Abstraction Phase
+    print("\n[System]: Entering Symbolic Unification Phase...")
+    labels, centers = memory.form_abstractions(n_clusters=CONFIG['n_symbols'])
+    
+    if centers is not None:
+        print(f"[System]: Discovered {CONFIG['n_symbols']} unique Symbols.")
+
+        # Visualization
+        print("\n[System]: Generating Visualization...")
+        fig, axes = plt.subplots(1, CONFIG['n_symbols'], figsize=(15, 3))
+        with torch.no_grad():
+            for i, ax in enumerate(axes):
+                # Decode the abstract center (The "Platonic Form")
+                latent_concept = torch.tensor(centers[i]).float().to(device)
+                generated_img = core.decoder(latent_concept).view(28, 28).cpu()
+                
+                ax.imshow(generated_img, cmap='gray')
+                ax.set_title(f"Symbol {i+1}")
+                ax.axis('off')
+        
+        plt.suptitle("The Mind's Alphabet: Discovered Symbols")
+        plt.show()
+
+if __name__ == "__main__":
+    main()
