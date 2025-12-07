@@ -8,6 +8,7 @@
 ---
 
 ## 👁️ VISION
+
 To create a system that doesn't just predict tokens, but possesses **internal resonance**, **self-stabilizing memory**, and the ability to **recursively improve its own governing logic**.
 
 Current AI models suffer from amnesia and hallucination. The SRA solves this by introducing a "Conscience" mechanism—a symbolic feedback loop that audits thoughts before they become actions.
@@ -15,6 +16,14 @@ Current AI models suffer from amnesia and hallucination. The SRA solves this by 
 ---
 
 ## 🗺️ ARCHITECTURAL ROADMAP
+
+### STATUS LEGEND
+*   **Implementable Today:** Standard technology stack (PyTorch, React, etc.) available now.
+*   **Advanced Prototype:** Requires careful engineering but relies on known methods.
+*   **Research Prototype:** Experimental. Requires tuning and specific dataset conditions.
+*   **Core Innovation:** The novel contribution of this architecture. Experimental and high-risk.
+
+---
 
 ### STAGE 1: THE CORE RESONANCE LOOP
 **Description:** Create a basic, self-stabilizing learning system that combines perception, resonance, and self-reflection.
@@ -47,14 +56,17 @@ Current AI models suffer from amnesia and hallucination. The SRA solves this by 
 ## 🚀 REAL-WORLD APPLICATION PHASES
 
 ### PHASE 1: REAL-WORLD GROUNDING (Code Analyst)
+**Inspiration:** *"Recognize what is in your sight..."* (Saying 5)
 *   **Codebase Sensor:** The AI reads real source code instead of abstract data.
 *   **Goal-Driven Analysis:** The AI optimizes for concrete metrics (e.g., reducing Cyclomatic Complexity).
 
 ### PHASE 2: INTELLIGENCE AND LANGUAGE
+**Inspiration:** *"I shall give you what no eye has seen..."* (Saying 17)
 *   **LLM Interface:** Connects the SRA to GPT-4 to give "names" to the symbols it discovers.
 *   **Generative Synthesis:** The AI writes new Python functions to resolve logic conflicts.
 
 ### PHASE 3: ACTION AND IMPACT
+**Inspiration:** *"Cleave a piece of wood, and I am there..."* (Saying 77)
 *   **Actionable Transformer:** Output is no longer just text; it is a `git diff`.
 *   **Hardened Sandbox:** The AI applies its own patches in a test repo to verify safety.
 *   **Action Governance:** The human approves the PR, completing the loop.
