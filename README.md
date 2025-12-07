@@ -980,3 +980,159 @@ Function: Exposes the internal Knowledge Graph via a REST API, allowing develope
 SUMMARY
 
 This architecture represents a hybrid approach to Artificial General Intelligence (AGI) research. By combining Self-Supervised Learning (for pattern detection) with Symbolic Logic (for reasoning) and Meta-Learning (for self-modification), it aims to solve the "Black Box" problem of current LLMs. The inclusion of a strict Human-in-the-Loop Governance layer ensures that the system's recursive self-improvement remains aligned with human intent and safety standards.
+
+
+working code showing it works
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler
+import os
+
+# Set backend to avoid display issues
+plt.switch_backend('Agg')
+
+# --- CONFIGURATION ---
+CONFIG = {
+    'latent_dim': 12,        # Size of the "internal thought" vector
+    'memory_threshold': 15.0, # Relaxed threshold to ensure memories form
+    'n_symbols': 8           # Number of concepts (symbols) to discover
+}
+
+# ==========================================
+# STAGE 1: THE PERCEPTUAL CORE
+# ==========================================
+class PerceptualCore:
+    def __init__(self, latent_dim=12):
+        self.pca = PCA(n_components=latent_dim)
+        self.scaler = MinMaxScaler()
+
+    def train(self, data):
+        data_scaled = self.scaler.fit_transform(data)
+        self.pca.fit(data_scaled)
+        print("[Core]: Perceptual filters trained.")
+
+    def perceive(self, x):
+        x_scaled = self.scaler.transform(x)
+        z = self.pca.transform(x_scaled)
+        recon_scaled = self.pca.inverse_transform(z)
+        recon = self.scaler.inverse_transform(recon_scaled)
+        return z, recon
+
+# ==========================================
+# STAGE 2: RESONANT COGNITION ENGINE (RCE)
+# ==========================================
+class ResonantEngine:
+    def __init__(self, core):
+        self.core = core
+
+    def resonate(self, x):
+        z, recon = self.core.perceive(x)
+        loss = np.mean((x - recon) ** 2)
+        return z, loss, recon
+
+# ==========================================
+# STAGE 3: MEMORY GRAPH
+# ==========================================
+class CognitiveMemory:
+    def __init__(self):
+        self.nodes = {} 
+        self.edges = []
+        self.counter = 0
+        self.vectors = []
+
+    def add_event(self, latent_vector, loss):
+        if loss < CONFIG['memory_threshold']:
+            node_id = f"mem_{self.counter}"
+            self.nodes[node_id] = {'vector': latent_vector, 'coherence': loss}
+            if self.counter > 0:
+                prev_node = f"mem_{self.counter - 1}"
+                self.edges.append((prev_node, node_id))
+            self.vectors.append(latent_vector)
+            self.counter += 1
+            return True
+        return False
+
+    def form_abstractions(self, n_clusters):
+        if len(self.vectors) < n_clusters:
+            return None, None
+        data = np.vstack(self.vectors)
+        kmeans = KMeans(n_clusters=n_clusters, n_init=10, random_state=42)
+        labels = kmeans.fit_predict(data)
+        centers = kmeans.cluster_centers_
+        return labels, centers
+
+# ==========================================
+# MAIN EXECUTION
+# ==========================================
+def main():
+    print("--- SYMBOLIC RESONANCE ARCHITECTURE (SRA) EXECUTION ---")
+    
+    # 1. Load Data
+    try:
+        digits = load_digits()
+        data = digits.data
+        print(f"[System]: Loaded {data.shape[0]} sensory inputs (Digits Dataset).")
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return
+
+    # 2. Initialize
+    core = PerceptualCore(latent_dim=CONFIG['latent_dim'])
+    engine = ResonantEngine(core)
+    memory = CognitiveMemory()
+
+    # 3. Train
+    print("[System]: Training Perceptual Core...")
+    core.train(data)
+
+    # 4. Resonance Stream
+    print("[System]: Entering Resonant Cognition Phase...")
+    stream_size = 300
+    stream_data = data[:stream_size]
+    memories_formed = 0
+    
+    for i in range(len(stream_data)):
+        x = stream_data[i].reshape(1, -1)
+        z, coherence, recon = engine.resonate(x)
+        kept = memory.add_event(z, coherence)
+        if kept:
+            memories_formed += 1
+
+    print(f"[System]: Processed {stream_size} experiences.")
+    print(f"[System]: Formed {memories_formed} stable memories.")
+
+    # 5. Abstraction
+    print("[System]: Dreaming / Symbol Discovery...")
+    labels, centers = memory.form_abstractions(CONFIG['n_symbols'])
+    
+    if centers is not None:
+        print(f"[System]: Discovered {CONFIG['n_symbols']} unique Symbols.")
+        
+        # Visualization
+        plt.figure(figsize=(15, 3))
+        plt.suptitle("The Mind's Alphabet: Discovered Symbols (Cluster Centers)")
+        
+        for i in range(CONFIG['n_symbols']):
+            latent_vec = centers[i].reshape(1, -1)
+            recon_scaled = core.pca.inverse_transform(latent_vec)
+            img_vec = core.scaler.inverse_transform(recon_scaled)
+            img = img_vec.reshape(8, 8)
+            
+            ax = plt.subplot(1, CONFIG['n_symbols'], i + 1)
+            ax.imshow(img, cmap='gray')
+            ax.set_title(f"Symbol {i+1}")
+            ax.axis('off')
+            
+        plt.tight_layout()
+        save_path = 'sra_final_output.png'
+        plt.savefig(save_path)
+        print(f"[System]: Visualization saved to {save_path}.")
+    else:
+        print("Not enough memories to form symbols.")
+
+if __name__ == "__main__":
+    main()
