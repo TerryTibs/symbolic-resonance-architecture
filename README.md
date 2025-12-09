@@ -1,7 +1,7 @@
 SYMBOLIC RESONANCE ARCHITECTURE (SRA)
 =====================================
 
-In the file strutcre you will find a working demo of stages 1-4 of my road map called sra_snake_demo.py
+In the file strutcre you will find a working demo of stages 1-4 of my road map called sra_snake_demo.py and an updated file sra_snake_demo_stages1-2-3-4-9.py
 
 A prototype for self-evolving AI, translating the mystical intuitions of the Gospel of Thomas into concrete cognitive architecture.
 
