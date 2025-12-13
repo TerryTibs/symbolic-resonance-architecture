@@ -2,6 +2,9 @@ SYMBOLIC RESONANCE ARCHITECTURE (SRA)
 =====================================
 
 In the file strutcre you will find a working demo of stages 1-4 of my road map called sra_snake_demo.py and an updated file sra_snake_demo_stages1-2-3-4-9.py
+<img width="1500" height="200" alt="3_symbols" src="https://github.com/user-attachments/assets/4856478d-647f-44b1-be6f-d89af4f6a236" />
+<img width="1000" height="500" alt="2_curiosity" src="https://github.com/user-attachments/assets/2d6ab78e-1975-4f69-8706-dea01dc13ae1" />
+<img width="1000" height="500" alt="1_ae_loss" src="https://github.com/user-attachments/assets/382591a9-cd32-4fa5-b078-20b37b36ace8" />
 
 A prototype for self-evolving AI, translating the mystical intuitions of the Gospel of Thomas into concrete cognitive architecture.
 
