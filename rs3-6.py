@@ -17,7 +17,7 @@ CONFIG = {
     "num_agents": 6,
     "latent_dim": 32,
     "bottleneck_dim": 8,
-    "total_steps": 5001,
+    "total_steps": 10001,
     "learning_rate": 8e-5,
     "contrastive_weight": 2.5,     # Weight for symmetric representation consistency
     "spectral_weight": 0.6,        # Weight for weight-rank regularization (SVD entropy)
@@ -25,7 +25,7 @@ CONFIG = {
     "alignment_weight": 35.0,      # Weight for policy-coordinate alignment
     "proprioceptive_weight": 30.0, # Weight for ego-centric awareness
     "field_coupling": 0.85,        # Coefficient for shared global manifold
-    "oracle_steps": 1000,          # Steps for supervised coordinate grounding
+    "oracle_steps": 2000,          # Steps for supervised coordinate grounding
     "base_entropy": 0.4,           # Coefficient for stochastic exploration
     "model_path": "geometric_standard_model.pth",
     "device": "cuda" if torch.cuda.is_available() else "cpu"
